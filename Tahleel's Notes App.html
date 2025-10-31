@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tahleel's Notes App</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
+<style>
+  :root{--bg:#f5f7fb;--card:#fff;--muted:#6b7280;--accent:#2563eb;--danger:#ef4444}
+  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+  body{background:var(--bg);padding:18px}
+  header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  h1{font-size:18px;margin:0}
+  .controls{margin-left:auto;display:flex;gap:8px}
+  input[type=text],textarea{font-size:14px;padding:8px;border:1px solid #d1d5db;border-radius:6px;background:white}
+  .main{display:flex;gap:14px}
+  .left{width:360px}
+  .right{flex:1}
+  .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 1px 3px rgba(16,24,40,0.04)}
+  label{font-size:13px;color:var(--muted)}
+  #title, #text{width:100%;box-sizing:border-box}
+  #text{min-height:80px;resize:vertical}
+  button{background:var(--accent);color:white;border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
+  button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(37,99,235,0.12)}
+  #notes{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:66vh;overflow:auto;padding-right:6px}
+  .note{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.04);background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent)}
+  .meta{flex:1}
+  .note h3{margin:0;font-size:14px}
+  .note p{margin:6px 0 0 0;font-size:13px;background:#fafafa;padding:8px;border-radius:6px;cursor:pointer}
+  .actions{display:flex;gap:6px;align-items:center}
+  .icon-btn{border:none;background:transparent;cursor:pointer;padding:6px;border-radius:6px}
+  .icon-btn:hover{background:#f3f4f6}
+  .pin{color:var(--muted)}
+  .pinned{color:gold}
+  .small{font-size:12px;color:var(--muted)}
+  .search{display:flex;gap:8px;align-items:center}
+  .toolbar{display:flex;gap:8px;align-items:center}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:#111;color:#fff;padding:8px 12px;border-radius:8px;display:flex;gap:8px;align-items:center}
+  .hidden{display:none}
+  .selected{outline:2px solid rgba(37,99,235,0.12)}
+  .checkbox{margin-right:8px}
+  .note .title-row{display:flex;align-items:center;gap:8px}
+  .note .title-row h3{flex:1}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .search input{width:240px}
+  .bulk-toolbar{display:flex;gap:8px;align-items:center}
+  .highlight{background:linear-gradient(90deg,#fff1b8,transparent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Tahleel's Notes App</h1>
+  <div class="controls">
+    <div class="search card" style="display:flex;gap:8px;align-items:center;padding:8px">
+      <input id="search" type="text" placeholder="Search title or text (Ctrl/Cmd+K)" />
+    </div>
+    <div class="card top-actions" style="padding:8px">
+      <button id="newBtn" title="New note (Ctrl/Cmd+N)">+ New</button>
+      <button id="exportBtn" class="ghost" title="Export JSON (Ctrl/Cmd+S)">Export</button>
+      <button id="importBtn" class="ghost">Import</button>
+      <button id="clearAll" class="ghost" style="color:var(--danger);border-color:rgba(239,68,68,0.12)">Clear</button>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="left card">
+    <label>Title</label>
+    <input id="title" type="text" placeholder="Short title... (Ctrl/Cmd+N)">
+    <label style="margin-top:8px">Text</label>
+    <textarea id="text" placeholder="The text that will be copied when you click the note..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="addBtn">Add Note</button>
+      <button id="addAndClear" class="ghost">Add & Clear</button>
+      <button id="selectMode" class="ghost">Select</button>
+    </div>
+    <div style="margin-top:10px" class="small">Shortcuts: <strong>Ctrl/Cmd+N</strong> New • <strong>Ctrl/Cmd+K</strong> Search • <strong>Ctrl/Cmd+S</strong> Export</div>
+  </div>
+
+  <div class="right">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="small">Notes (<span id="count">0</span>)</div>
+        <div class="bulk-toolbar">
+          <button id="deleteSelected" class="ghost" style="color:var(--danger);">Delete Selected</button>
+          <button id="selectAll" class="ghost">Select All</button>
+          <button id="deselectAll" class="ghost">Deselect</button>
+        </div>
+      </div>
+      <div id="notes"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"><span id="toastText"></span><button id="undoBtn" class="ghost">Undo</button></div>
+<input id="fileInput" type="file" accept="application/json" class="hidden" />
+
+<script>
+(function(){
+  const LS_KEY = 'smartCopyNotes_v1';
+  let notes = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  let lastDeleted = null;
+  const notesEl = document.getElementById('notes');
+  const countEl = document.getElementById('count');
+  const titleEl = document.getElementById('title');
+  const textEl = document.getElementById('text');
+  const addBtn = document.getElementById('addBtn');
+  const addAndClear = document.getElementById('addAndClear');
+  const newBtn = document.getElementById('newBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const importBtn = document.getElementById('importBtn');
+  const fileInput = document.getElementById('fileInput');
+  const searchEl = document.getElementById('search');
+  const deleteSelected = document.getElementById('deleteSelected');
+  const selectMode = document.getElementById('selectMode');
+  const selectAllBtn = document.getElementById('selectAll');
+  const deselectAllBtn = document.getElementById('deselectAll');
+  const clearAllBtn = document.getElementById('clearAll');
+
+  let selectModeOn = false;
+  let selectedSet = new Set();
+
+  //Helpers
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(notes)); render(); }
+  function id(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function formatDate(ts){ const d = new Date(ts); return d.toLocaleString(); }
+
+  //Render
+  function render(){
+    notesEl.innerHTML = '';
+    // sort: pinned first, then updatedAt desc
+    const q = (searchEl.value||'').toLowerCase();
+    const filtered = notes.filter(n=>{
+      if(!q) return true;
+      return (n.title||'').toLowerCase().includes(q) || (n.text||'').toLowerCase().includes(q);
+    });
+    filtered.sort((a,b)=>{ if(a.pinned && !b.pinned) return -1; if(!a.pinned && b.pinned) return 1; return b.updatedAt - a.updatedAt; });
+    filtered.forEach(n=> notesEl.appendChild(noteNode(n)));
+    countEl.textContent = notes.length;
+  }
+
+  function noteNode(n){
+    const wrap = document.createElement('div'); wrap.className='note';
+
+    const checkbox = document.createElement('input'); checkbox.type='checkbox'; checkbox.className='checkbox'; checkbox.checked = selectedSet.has(n.id);
+    checkbox.addEventListener('change', ()=>{
+      if(checkbox.checked) selectedSet.add(n.id); else selectedSet.delete(n.id);
+      wrap.classList.toggle('selected', checkbox.checked);
+    });
+    if(!selectModeOn) checkbox.style.display='none';
+
+    const meta = document.createElement('div'); meta.className='meta';
+    const titleRow = document.createElement('div'); titleRow.className='title-row';
+    const h3 = document.createElement('h3'); h3.textContent = n.title || 'Untitled';
+    // highlight search
+    const q = (searchEl.value||'').trim();
+    if(q){ const re = new RegExp('('+escapeReg(q)+')','ig'); h3.innerHTML = (n.title||'Untitled').replace(re, '<span class="highlight">$1</span>'); }
+
+    const small = document.createElement('div'); small.className='small'; small.textContent = formatDate(n.updatedAt);
+    titleRow.appendChild(h3);
+    titleRow.appendChild(small);
+
+    const p = document.createElement('p'); p.textContent = n.text;
+    if(q){ const re = new RegExp('('+escapeReg(q)+')','ig'); p.innerHTML = (n.text||'').replace(re, '<span class="highlight">$1</span>'); }
+    p.title = 'Click to copy';
+    p.addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(n.text); showToast('Copied "'+(n.title||'Untitled')+'"'); n.copiedAt = Date.now(); n.updatedAt = Date.now(); save(); }
+      catch(e){ fallbackCopy(n.text); }
+    });
+
+    const actions = document.createElement('div'); actions.className='actions';
+    // copy icon
+    const copyBtn = icon('📋','Copy'); copyBtn.addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(n.text); showToast('Copied'); n.copiedAt = Date.now(); save(); }catch(e){ fallbackCopy(n.text);} });
+    // edit
+    const editBtn = icon('✏️','Edit'); editBtn.addEventListener('click', ()=>{ openEditor(n); });
+    // duplicate
+    const dupBtn = icon('⎘','Duplicate'); dupBtn.addEventListener('click', ()=>{ const clone = {...n, id:id(), createdAt:Date.now(), updatedAt:Date.now()}; notes.push(clone); save(); showToast('Duplicated'); });
+    // pin
+    const pinBtn = icon(n.pinned ? '📌' : '📍','Pin'); pinBtn.addEventListener('click', ()=>{ n.pinned = !n.pinned; n.updatedAt = Date.now(); save(); });
+    // delete
+    const delBtn = icon('🗑️','Delete'); delBtn.addEventListener('click', ()=>{ deleteNote(n.id); });
+
+    actions.appendChild(copyBtn); actions.appendChild(editBtn); actions.appendChild(dupBtn); actions.appendChild(pinBtn); actions.appendChild(delBtn);
+
+    meta.appendChild(titleRow);
+    meta.appendChild(p);
+
+    wrap.appendChild(checkbox);
+    wrap.appendChild(meta);
+    wrap.appendChild(actions);
+
+    return wrap;
+  }
+
+  function icon(label, title){ const b = document.createElement('button'); b.className='icon-btn'; b.title = title; b.textContent = label; return b; }
+
+  function escapeReg(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+  //Add
+  function addNoteRaw(title,text){
+    const now = Date.now();
+    const note = { id:id(), title: title||'Untitled', text: text||'', createdAt:now, updatedAt:now, pinned:false };
+    notes.push(note); save(); return note;
+  }
+
+  addBtn.addEventListener('click', ()=>{ const t=titleEl.value.trim(); const x=textEl.value.trim(); if(!x){ alert('Text required'); return; } addNoteRaw(t,x); titleEl.value=''; textEl.value=''; titleEl.focus(); });
+  addAndClear.addEventListener('click', ()=>{ const t=titleEl.value.trim(); const x=textEl.value.trim(); if(!x) return; addNoteRaw(t,x); titleEl.value=''; textEl.value=''; });
+  newBtn.addEventListener('click', ()=>{ titleEl.focus(); });
+
+  //Editor (in-place edit modal-like simple inline)
+  function openEditor(n){
+    const titlePrev = n.title; const textPrev = n.text;
+    const tInput = document.createElement('input'); tInput.value = n.title; tInput.style.width='100%'; tInput.style.marginBottom='8px';
+    const ta = document.createElement('textarea'); ta.value = n.text; ta.style.width='100%'; ta.style.minHeight='80px';
+    const saveBtn = document.createElement('button'); saveBtn.textContent='Save';
+    const cancelBtn = document.createElement('button'); cancelBtn.textContent='Cancel'; cancelBtn.className='ghost';
+    const wrapper = document.createElement('div'); wrapper.className='card'; wrapper.style.position='fixed'; wrapper.style.left='50%'; wrapper.style.top='50%'; wrapper.style.transform='translate(-50%,-50%)'; wrapper.style.zIndex=9999; wrapper.style.width='min(600px,90vw)';
+    wrapper.appendChild(tInput); wrapper.appendChild(ta);
+    const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.marginTop='8px'; row.appendChild(saveBtn); row.appendChild(cancelBtn); wrapper.appendChild(row);
+    document.body.appendChild(wrapper);
+    tInput.focus();
+    cancelBtn.addEventListener('click', ()=>{ wrapper.remove(); });
+    saveBtn.addEventListener('click', ()=>{ n.title = tInput.value || 'Untitled'; n.text = ta.value; n.updatedAt = Date.now(); save(); wrapper.remove(); });
+  }
+
+  //Delete
+  function deleteNote(id){
+    const idx = notes.findIndex(n=>n.id===id); if(idx===-1) return;
+    lastDeleted = notes[idx]; notes.splice(idx,1); save(); showToast('Deleted "'+(lastDeleted.title||'Untitled')+'"', true);
+  }
+
+  //Undo
+  const toast = document.getElementById('toast'); const toastText = document.getElementById('toastText'); const undoBtn = document.getElementById('undoBtn');
+  let toastTimer = null;
+  function showToast(msg, showUndo){ toastText.textContent = msg; toast.classList.remove('hidden'); if(showUndo){ undoBtn.style.display='inline-block'; } else { undoBtn.style.display='none'; }
+    if(toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ toast.classList.add('hidden'); lastDeleted=null; }, 6000);
+  }
+  undoBtn.addEventListener('click', ()=>{ if(lastDeleted){ notes.push(lastDeleted); lastDeleted.updatedAt = Date.now(); save(); lastDeleted=null; toast.classList.add('hidden'); } });
+
+  //Fallback copy
+  function fallbackCopy(text){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); showToast('Copied (fallback)'); }catch(e){ prompt('Copy this text:', text); } ta.remove(); }
+
+  //Search
+  searchEl.addEventListener('input', ()=> render());
+
+  //Export/Import
+  exportBtn.addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(notes, null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='smartCopyNotes_export_'+Date.now()+'.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); });
+  importBtn.addEventListener('click', ()=> fileInput.click());
+  fileInput.addEventListener('change', (e)=>{
+    const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ()=>{
+      try{ const data = JSON.parse(r.result); if(Array.isArray(data)){ notes = notes.concat(data.map(d=>({...d, id:id(), createdAt:Date.now(), updatedAt:Date.now()}))); save(); showToast('Imported '+data.length+' notes'); }
+      else alert('Invalid file'); }catch(err){ alert('Invalid JSON'); }
+    }; r.readAsText(f);
+  });
+
+  // Select mode & bulk actions
+  selectMode.addEventListener('click', ()=>{ selectModeOn = !selectModeOn; selectedSet.clear(); document.querySelectorAll('.checkbox').forEach(c=> c.style.display = selectModeOn ? 'inline-block':'none'); render(); });
+  selectAllBtn.addEventListener('click', ()=>{ notes.forEach(n=> selectedSet.add(n.id)); render(); document.querySelectorAll('.checkbox').forEach(c=> c.checked = true); });
+  deselectAllBtn.addEventListener('click', ()=>{ selectedSet.clear(); render(); });
+  deleteSelected.addEventListener('click', ()=>{
+    if(selectedSet.size===0){ alert('No notes selected'); return; }
+    if(!confirm('Delete '+selectedSet.size+' selected notes?')) return;
+    lastDeleted = null; // clear previous undo
+    notes = notes.filter(n => !selectedSet.has(n.id)); selectedSet.clear(); save(); showToast('Deleted selected');
+  });
+
+  // Clear all
+  clearAllBtn.addEventListener('click', ()=>{
+    if(!confirm('Clear ALL notes? This cannot be undone.')) return; notes = []; save(); showToast('All cleared');
+  });
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    const mod = e.ctrlKey || e.metaKey;
+    if(mod && e.key.toLowerCase()==='n'){ e.preventDefault(); titleEl.focus(); }
+    if(mod && e.key.toLowerCase()==='k'){ e.preventDefault(); searchEl.focus(); }
+    if(mod && e.key.toLowerCase()==='s'){ e.preventDefault(); exportBtn.click(); }
+  });
+
+  //Initial render
+  render();
+
+  //Expose for debugging
+  window.smartNotes = { addNoteRaw, notes, save };
+})();
+</script>
+</body>
+</html>
