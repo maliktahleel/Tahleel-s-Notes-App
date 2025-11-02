@@ -24,15 +24,15 @@
     button{background:rgba(255,255,255,0.25);border:1px solid var(--glass-border);backdrop-filter:blur(20px);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:500;transition:.3s;}
     button:hover{box-shadow:0 0 10px rgba(255,255,255,0.3);}
     .input-section{width:100%;max-width:800px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;}
-    .input-section input,.input-section textarea{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-light);backdrop-filter:blur(20px);font-family:Poppins;font-size:14px;color:inherit;}
+    .input-section input,.input-section textarea{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-light);backdrop-filter:blur(20px);font-family:Poppins;font-size:14px;}
     .input-section button{align-self:flex-end;background:var(--accent);color:white;border:none;padding:10px 20px;border-radius:10px;}
     .search-bar{width:100%;max-width:600px;margin-bottom:20px;display:flex;gap:10px;}
-    .search-bar input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass-light);backdrop-filter:blur(20px);color:inherit;}
+    .search-bar input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass-light);backdrop-filter:blur(20px);}
     .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;width:100%;max-width:1200px;}
-    .card{position:relative;padding:18px;border-radius:20px;background:var(--glass-light);border:1px solid var(--glass-border);backdrop-filter:blur(25px);box-shadow:0 8px 32px rgba(0,0,0,0.25);transition:.3s;cursor:pointer;}
+    .card{position:relative;padding:18px;border-radius:20px;background:var(--glass-light);border:1px solid var(--glass-border);backdrop-filter:blur(25px);box-shadow:0 8px 32px rgba(0,0,0,0.25);transition:.3s;}
     .card:hover{transform:translateY(-4px);}
     .note-title{font-weight:600;font-size:16px;margin-bottom:6px;}
-    .note-text{font-size:14px;white-space:pre-wrap;}
+    .note-text{font-size:14px;white-space:pre-wrap;cursor:pointer;}
     .actions{position:absolute;top:8px;right:8px;display:flex;gap:8px;}
     .icon-btn{background:rgba(255,255,255,0.2);border:none;border-radius:6px;padding:6px;cursor:pointer;}
     .icon-btn:hover{background:rgba(255,255,255,0.35);}
@@ -41,7 +41,6 @@
     .dark-mode{background:var(--bg-dark);color:var(--text-light);}
     .dark-mode button{color:var(--text-light);background:var(--glass-dark);}
     .dark-mode .card{background:var(--glass-dark);color:var(--text-light);}
-    .dark-mode .search-bar input,.dark-mode .input-section input,.dark-mode .input-section textarea{color:var(--text-light);}
     @media(max-width:720px){body{padding:20px;}}
   </style>
 </head>
@@ -55,7 +54,6 @@
       </div>
     </div>
     <div class="toolbar">
-      <button id="viewToggle">🔳 View</button>
       <button id="themeToggle">🌙 Dark</button>
       <button id="clearAll">🗑️ Clear</button>
     </div>
@@ -74,19 +72,31 @@
   <div class="notes" id="notes"></div>
   <div class="toast" id="toast">Copied!</div>
 
-  <script>
-    const notesContainer=document.getElementById('notes');
-    const createBtn=document.getElementById('createNote');
-    const noteTitle=document.getElementById('noteTitle');
-    const noteText=document.getElementById('noteText');
-    const clearBtn=document.getElementById('clearAll');
-    const viewToggle=document.getElementById('viewToggle');
-    const themeToggle=document.getElementById('themeToggle');
-    const toast=document.getElementById('toast');
-    const searchInput=document.getElementById('searchInput');
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    let notes=JSON.parse(localStorage.getItem('glassNotes')||'[]');
-    let gridView=true;
+    const firebaseConfig = {
+      apiKey: "AIzaSyC6KT2ARiHfTquxCYqzaOGSmrrlat0Z3J8",
+      authDomain: "tahleel-notes.firebaseapp.com",
+      projectId: "tahleel-notes",
+      storageBucket: "tahleel-notes.firebasestorage.app",
+      messagingSenderId: "82024240139",
+      appId: "1:82024240139:web:bcd38c713b1bebe6dc230e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const notesRef = collection(db, "notes");
+
+    const notesContainer = document.getElementById('notes');
+    const createBtn = document.getElementById('createNote');
+    const noteTitle = document.getElementById('noteTitle');
+    const noteText = document.getElementById('noteText');
+    const clearBtn = document.getElementById('clearAll');
+    const themeToggle = document.getElementById('themeToggle');
+    const toast = document.getElementById('toast');
+    const searchInput = document.getElementById('searchInput');
 
     function showToast(msg='Copied!'){
       toast.textContent=msg;
@@ -94,46 +104,58 @@
       setTimeout(()=>toast.classList.remove('show'),1200);
     }
 
-    function saveNotes(){localStorage.setItem('glassNotes',JSON.stringify(notes));}
-
-    function renderNotes(){
-      const query=searchInput.value.toLowerCase();
+    function renderNotes(snapshot){
       notesContainer.innerHTML='';
-      notes.filter(note=>note.title.toLowerCase().includes(query)||note.text.toLowerCase().includes(query))
-      .sort((a,b)=>b.fav - a.fav)
-      .forEach((note,i)=>{
-        const card=document.createElement('div');card.className='card';
-        card.innerHTML=`<div class='note-title'>${note.title}</div><div class='note-text'>${note.text}</div>
-        <div class='actions'>
-          <button class='icon-btn pin' title='Pin to Top'>📌</button>
-          <button class='icon-btn fav' title='Favorite'>⭐</button>
-          <button class='icon-btn edit' title='Edit'>✏️</button>
-          <button class='icon-btn del' title='Delete'>🗑️</button>
-        </div>`;
-        card.onclick=()=>{navigator.clipboard.writeText(note.text);showToast('Note text copied!');};
-        card.querySelector('.del').onclick=(e)=>{e.stopPropagation();if(confirm('Delete this note?')){notes.splice(i,1);saveNotes();renderNotes();}};
-        card.querySelector('.edit').onclick=(e)=>{e.stopPropagation();const newTitle=prompt('Edit title',note.title)||note.title;const newText=prompt('Edit text',note.text)||note.text;note.title=newTitle;note.text=newText;saveNotes();renderNotes();};
-        card.querySelector('.fav').onclick=(e)=>{e.stopPropagation();note.fav=!note.fav;saveNotes();renderNotes();};
-        card.querySelector('.pin').onclick=(e)=>{e.stopPropagation();const pinned=notes.splice(i,1)[0];notes.unshift(pinned);saveNotes();renderNotes();};
-        if(note.fav) card.style.border='2px solid gold';
-        notesContainer.appendChild(card);
-      });
+      const queryText = searchInput.value.toLowerCase();
+      snapshot.docs
+        .filter(doc => {
+          const data = doc.data();
+          return data.title.toLowerCase().includes(queryText) || data.text.toLowerCase().includes(queryText);
+        })
+        .forEach(docSnap=>{
+          const note=docSnap.data();
+          const id=docSnap.id;
+          const card=document.createElement('div');card.className='card';
+          card.innerHTML=`
+            <div class='note-title'>${note.title}</div>
+            <div class='note-text'>${note.text}</div>
+            <div class='actions'>
+              <button class='icon-btn copy' title='Copy'>📋</button>
+              <button class='icon-btn edit' title='Edit'>✏️</button>
+              <button class='icon-btn del' title='Delete'>🗑️</button>
+            </div>`;
+          card.querySelector('.copy').onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(note.text);showToast('Text copied!');};
+          card.querySelector('.del').onclick=async(e)=>{e.stopPropagation();await deleteDoc(doc(db,"notes",id));};
+          card.querySelector('.edit').onclick=async(e)=>{
+            e.stopPropagation();
+            const newTitle=prompt('Edit title',note.title)||note.title;
+            const newText=prompt('Edit text',note.text)||note.text;
+            await updateDoc(doc(db,"notes",id),{title:newTitle,text:newText});
+          };
+          notesContainer.appendChild(card);
+        });
     }
 
-    createBtn.onclick=()=>{
+    // Real-time listener
+    onSnapshot(query(notesRef, orderBy("created","desc")),renderNotes);
+
+    createBtn.onclick=async()=>{
       const title=noteTitle.value.trim();
       const text=noteText.value.trim();
-      if(!text)return;
-      notes.push({title:title||'Untitled',text,fav:false});
-      saveNotes();renderNotes();noteTitle.value='';noteText.value='';
+      if(!text) return;
+      await addDoc(notesRef,{title:title||'Untitled',text,created:Date.now()});
+      noteTitle.value='';noteText.value='';
     };
 
-    clearBtn.onclick=()=>{if(confirm('Delete all notes?')){notes=[];saveNotes();renderNotes();}};
-    viewToggle.onclick=()=>{gridView=!gridView;notesContainer.style.display=gridView?'grid':'block';};
-    themeToggle.onclick=()=>{document.body.classList.toggle('dark-mode');themeToggle.textContent=document.body.classList.contains('dark-mode')?'🌤 Light':'🌙 Dark';};
-    searchInput.oninput=()=>renderNotes();
+    clearBtn.onclick=async()=>{
+      if(confirm('Delete all notes?')){
+        const snapshot = await onSnapshot(notesRef,()=>{});
+        snapshot.forEach(async docSnap => await deleteDoc(doc(db,"notes",docSnap.id)));
+      }
+    };
 
-    renderNotes();
+    themeToggle.onclick=()=>{document.body.classList.toggle('dark-mode');themeToggle.textContent=document.body.classList.contains('dark-mode')?'🌤 Light':'🌙 Dark';};
+    searchInput.oninput=()=>onSnapshot(query(notesRef, orderBy("created","desc")),renderNotes);
   </script>
 </body>
 </html>
