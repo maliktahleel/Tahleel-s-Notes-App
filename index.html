@@ -45,8 +45,67 @@
   .search input{width:240px}
   .bulk-toolbar{display:flex;gap:8px;align-items:center}
   .highlight{background:linear-gradient(90deg,#fff1b8,transparent)}
+/* 📱 Mobile responsive adjustments */
+@media (max-width: 700px) {
+  body {
+    padding: 10px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .controls {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .main {
+    flex-direction: column;
+  }
+
+  .left {
+    width: 100%;
+  }
+
+  .right {
+    width: 100%;
+  }
+
+  #notes {
+    max-height: none;
+  }
+
+  button, input[type=text], textarea {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  .note {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .note p {
+    font-size: 14px;
+    word-wrap: break-word;
+  }
+
+  .actions {
+    justify-content: flex-end;
+  }
+
+  .search input {
+    width: 100%;
+  }
+}
+
 </style>
 </head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <body>
 <header>
   <h1>Tahleel's Notes App</h1>
