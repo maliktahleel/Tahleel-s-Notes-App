@@ -108,6 +108,8 @@
     .dark-mode .btn{
       background:rgba(30,30,40,0.5);
       border-color:rgba(255,255,255,0.1);
+      color:#ffffff;
+      text-shadow:0 2px 4px rgba(0,0,0,0.8);
     }
     .dark-mode .btn:hover{
       background:rgba(40,40,50,0.6);
@@ -120,6 +122,8 @@
     .dark-mode .mode-indicator{
       background:rgba(20,20,30,0.5);
       border-color:rgba(255,255,255,0.08);
+      color:#ffffff;
+      text-shadow:0 2px 4px rgba(0,0,0,0.8);
     }
     .dark-mode input[type=text],
     .dark-mode textarea{
@@ -170,12 +174,15 @@
     .dark-mode label,
     .dark-mode .modal-title,
     .dark-mode .notification-title{
-      color:#f1f5f9;
+      color:#ffffff;
       text-shadow:0 2px 6px rgba(0,0,0,0.8);
+    }
+    .dark-mode .modal-message{
+      color:#cbd5e1;
+      text-shadow:0 2px 4px rgba(0,0,0,0.8);
     }
     .dark-mode .muted,
     .dark-mode .small,
-    .dark-mode .modal-message,
     .dark-mode .notification-message{
       color:#94a3b8;
       text-shadow:0 1px 3px rgba(0,0,0,0.6);
@@ -251,7 +258,8 @@
       position:relative;
       overflow:hidden;
       font-weight:500;
-      text-shadow:0 1px 3px rgba(0,0,0,0.2);
+      color:#0f172a;
+      text-shadow:0 1px 3px rgba(255,255,255,0.5);
       -webkit-tap-highlight-color:transparent;
       user-select:none;
     }
@@ -291,6 +299,8 @@
       backdrop-filter:blur(16px);
       border:1.5px solid rgba(255,255,255,0.25);
       font-weight:500;
+      color:#0f172a;
+      text-shadow:0 1px 3px rgba(255,255,255,0.5);
     }
 
     .top-area{
@@ -310,6 +320,7 @@
                  inset 0 1px 0 rgba(255,255,255,0.3);
       position:relative;
       transition:all 0.2s ease;
+      box-sizing:border-box;
     }
     
     .card:hover{
@@ -329,6 +340,7 @@
     
     input[type=text],textarea{
       width:100%;
+      max-width:100%;
       box-sizing:border-box;
       padding:12px;
       border-radius:12px;
@@ -586,16 +598,19 @@
       margin-bottom:12px;
       position:relative;
       z-index:1;
+      color:#0f172a;
+      text-shadow:0 2px 4px rgba(255,255,255,0.6);
     }
     
     .modal-message{
       text-align:center;
       line-height:1.6;
       margin-bottom:24px;
-      color:var(--muted);
+      color:#1e293b;
       white-space:pre-line;
       position:relative;
       z-index:1;
+      text-shadow:0 1px 2px rgba(255,255,255,0.5);
     }
     
     .modal-buttons{
@@ -784,141 +799,194 @@
 
     /* Mobile enhancements */
     @media(max-width:800px){
-      .container{padding:12px;margin:12px auto}
+      .container{
+        padding:8px;
+        margin:8px auto;
+      }
       
       header{
-        flex-direction:column;
-        align-items:stretch;
-        gap:12px;
+        margin-bottom:12px;
+        gap:8px;
       }
       
       .brand{
-        justify-content:center;
+        flex:1;
       }
       
       .controls{
-        justify-content:center;
-        flex-wrap:wrap;
+        gap:6px;
       }
       
       .top-area{
         flex-direction:column;
-        gap:12px;
+        gap:10px;
       }
       
-      .left{width:100%}
+      .left{
+        width:100%;
+        box-sizing:border-box;
+      }
       
       .card{
-        padding:14px;
+        padding:12px;
+        border-radius:16px;
+        box-sizing:border-box;
+        width:100%;
       }
       
       .btn{
-        font-size:15px;
-        padding:10px 16px;
-        flex:1;
-        min-width:100px;
+        font-size:13px;
+        padding:6px 10px;
+        border-radius:10px;
+      }
+      
+      .mode-indicator{
+        font-size:12px;
+        padding:6px 10px;
       }
       
       input[type=text],textarea{
         font-size:16px;
-        padding:14px;
+        padding:10px;
+        border-radius:10px;
       }
       
       textarea{
-        min-height:120px;
+        min-height:100px;
+      }
+      
+      label{
+        font-size:12px;
+        margin-bottom:6px;
       }
       
       #notes{
         grid-template-columns:1fr;
-        gap:12px;
+        gap:10px;
       }
       
       .note{
-        padding:14px;
+        padding:12px;
+        border-radius:14px;
+      }
+      
+      .note .title{
+        font-size:15px;
+      }
+      
+      .note .text{
+        font-size:14px;
+      }
+      
+      .note .meta{
+        font-size:11px;
       }
       
       .note .actions{
         opacity:1;
         transform:translateY(0);
-        position:relative;
-        top:auto;
-        right:auto;
-        margin-top:12px;
-        justify-content:flex-end;
+        top:8px;
+        right:8px;
+        gap:4px;
       }
       
       .icon-btn{
-        padding:8px 10px;
-        font-size:16px;
+        padding:5px 7px;
+        font-size:14px;
+        border-radius:6px;
       }
       
       .notification-container{
-        top:10px;
-        right:10px;
-        left:10px;
+        top:8px;
+        right:8px;
+        left:8px;
         max-width:none;
       }
       
       .notification{
-        padding:12px 16px;
+        padding:10px 12px;
+        border-radius:12px;
+        font-size:13px;
+      }
+      
+      .notification-title{
+        font-size:14px;
+      }
+      
+      .notification-message{
+        font-size:12px;
       }
       
       .modal{
-        padding:24px;
+        padding:20px;
         margin:10px;
         max-width:calc(100vw - 20px);
+        border-radius:20px;
       }
       
       .modal-title{
-        font-size:20px;
+        font-size:18px;
+      }
+      
+      .modal-message{
+        font-size:14px;
       }
       
       .modal-buttons{
         flex-direction:column;
-        gap:10px;
+        gap:8px;
       }
       
       .modal-btn{
         width:100%;
-        padding:14px;
+        padding:10px;
+        font-size:14px;
       }
       
       .fab{
         display:flex;
-        width:56px;
-        height:56px;
-        bottom:16px;
-        right:16px;
-      }
-      
-      .toast{
-        bottom:80px;
-        left:10px;
-        right:10px;
-        transform:none;
-        width:auto;
-      }
-      
-      .search{
-        flex-direction:column;
-      }
-      
-      .search input{
-        width:100%;
-      }
-      
-      .logo{
-        width:48px;
-        height:48px;
+        width:52px;
+        height:52px;
+        bottom:12px;
+        right:12px;
         font-size:24px;
       }
       
+      .toast{
+        bottom:70px;
+        left:8px;
+        right:8px;
+        transform:none;
+        width:auto;
+        padding:10px 14px;
+        font-size:13px;
+      }
+      
+      .search{
+        margin-bottom:10px;
+      }
+      
+      .search input{
+        padding:10px;
+        font-size:14px;
+      }
+      
+      .logo{
+        width:44px;
+        height:44px;
+        font-size:22px;
+      }
+      
       .title{
-        font-size:18px;
+        font-size:16px;
       }
       
       .subtitle{
-        font-size:12px;
+        font-size:11px;
+      }
+      
+      .small{
+        font-size:11px;
       }
     }
     
@@ -927,8 +995,7 @@
       .btn,
       .icon-btn,
       .modal-btn{
-        min-height:44px;
-        min-width:44px;
+        min-height:36px;
       }
       
       .note{
