@@ -2,79 +2,1080 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tahleel Notes</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#667eea" />
+  <title>Tahleel Notes — Enhanced Glass Edition</title>
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/942/942748.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --text-dark:#1e293b;--text-light:#f8fafc;--muted-dark:#94a3b8;--accent:linear-gradient(135deg,#6d28d9,#2563eb);
-      --glass-light:rgba(255,255,255,0.25);--glass-dark:rgba(0,0,0,0.35);--glass-border:rgba(255,255,255,0.3);
-      --bg-light:linear-gradient(135deg,#e0e7ff 0%,#bae6fd 50%,#fef9c3 100%);
-      --bg-dark:linear-gradient(135deg,#0f172a 0%,#1e1b4b 60%,#312e81 100%);
+      --text-dark:#0f172a;--text-light:#ffffff;--muted:#64748b;
+      --glass-light:rgba(255,255,255,0.15);--glass-dark:rgba(0,0,0,0.25);
+      --glass-border:rgba(255,255,255,0.35);
+      --blue:#3b82f6;--purple:#a855f7;--pink:#ec4899;--cyan:#06b6d4;
+      --green:#10b981;--red:#ef4444;--amber:#f59e0b;
     }
-    body{margin:0;font-family:Poppins;height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px;
-      color:var(--text-dark);background:var(--bg-light);transition:background .6s,color .6s;}
-    header{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1200px;margin-bottom:24px;}
-    .logo{font-size:28px;width:60px;height:60px;display:grid;place-items:center;border-radius:14px;background:var(--glass-light);backdrop-filter:blur(20px);border:1px solid var(--glass-border);box-shadow:0 4px 30px rgba(0,0,0,.2);}
-    .title-wrap{display:flex;flex-direction:column;}
-    .title{font-size:22px;font-weight:600;letter-spacing:.3px;}
-    .subtitle{font-size:14px;color:var(--muted-dark);}
-    .toolbar{display:flex;gap:8px;align-items:center;}
-    button{background:rgba(255,255,255,0.25);border:1px solid var(--glass-border);backdrop-filter:blur(20px);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:500;transition:.3s;}
-    button:hover{box-shadow:0 0 10px rgba(255,255,255,0.3);}
-    .input-section{width:100%;max-width:800px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;}
-    .input-section input,.input-section textarea{width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-light);backdrop-filter:blur(20px);font-family:Poppins;font-size:14px;}
-    .input-section button{align-self:flex-end;background:var(--accent);color:white;border:none;padding:10px 20px;border-radius:10px;}
-    .search-bar{width:100%;max-width:600px;margin-bottom:20px;display:flex;gap:10px;}
-    .search-bar input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);background:var(--glass-light);backdrop-filter:blur(20px);}
-    .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;width:100%;max-width:1200px;}
-    .card{position:relative;padding:18px;border-radius:20px;background:var(--glass-light);border:1px solid var(--glass-border);backdrop-filter:blur(25px);box-shadow:0 8px 32px rgba(0,0,0,0.25);transition:.3s;}
-    .card:hover{transform:translateY(-4px);}
-    .note-title{font-weight:600;font-size:16px;margin-bottom:6px;}
-    .note-text{font-size:14px;white-space:pre-wrap;cursor:pointer;}
-    .actions{position:absolute;top:8px;right:8px;display:flex;gap:8px;}
-    .icon-btn{background:rgba(255,255,255,0.2);border:none;border-radius:6px;padding:6px;cursor:pointer;}
-    .icon-btn:hover{background:rgba(255,255,255,0.35);}
-    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;padding:10px 16px;border-radius:10px;backdrop-filter:blur(10px);opacity:0;transition:opacity .3s;z-index:999;}
-    .toast.show{opacity:1;}
-    .dark-mode{background:var(--bg-dark);color:var(--text-light);}
-    .dark-mode button{color:var(--text-light);background:var(--glass-dark);}
-    .dark-mode .card{background:var(--glass-dark);color:var(--text-light);}
-    @media(max-width:720px){body{padding:20px;}}
+    
+    @keyframes aurora{
+      0%,100%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+    }
+    
+    @keyframes shimmer{
+      0%{background-position:-200% center}
+      100%{background-position:200% center}
+    }
+    
+    @keyframes float{
+      0%,100%{transform:translateY(0px)}
+      50%{transform:translateY(-8px)}
+    }
+    
+    @keyframes slideDown{
+      from{opacity:0;transform:translateY(-20px) scale(0.95)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    
+    @keyframes scaleIn{
+      from{opacity:0;transform:scale(0.9)}
+      to{opacity:1;transform:scale(1)}
+    }
+    
+    @keyframes ripple{
+      to{transform:scale(4);opacity:0}
+    }
+    
+    html,body{
+      height:100%;margin:0;
+      font-family:Poppins,system-ui,Arial;
+      color:var(--text-dark);
+      overflow-x:hidden;
+      transition:color .3s;
+      text-shadow:0 1px 2px rgba(0,0,0,0.1);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      touch-action:manipulation;
+    }
+    
+    body{
+      position:relative;
+      background:#0f172a;
+    }
+    
+    body::before{
+      content:'';
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      z-index:-1;
+      background:linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+      background-size:400% 400%;
+      animation:aurora 10s ease infinite;
+      opacity:0.9;
+    }
+    
+    body::after{
+      content:'';
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      z-index:-1;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    }
+    
+    .dark-mode{
+      color:#e2e8f0;
+      text-shadow:0 2px 4px rgba(0,0,0,0.8);
+    }
+    .dark-mode body::before{
+      background:linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
+      opacity:0.4;
+    }
+    .dark-mode body::after{
+      opacity:0.15;
+    }
+    .dark-mode .card{
+      background:rgba(20,20,30,0.6);
+      border-color:rgba(255,255,255,0.08);
+      box-shadow:0 8px 32px rgba(0,0,0,0.6),
+                 inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .dark-mode .card:hover{
+      border-color:rgba(255,255,255,0.12);
+      box-shadow:0 12px 40px rgba(0,0,0,0.7),
+                 inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .dark-mode .btn{
+      background:rgba(30,30,40,0.5);
+      border-color:rgba(255,255,255,0.1);
+    }
+    .dark-mode .btn:hover{
+      background:rgba(40,40,50,0.6);
+      border-color:rgba(255,255,255,0.15);
+    }
+    .dark-mode .logo{
+      background:rgba(20,20,30,0.6);
+      border-color:rgba(255,255,255,0.1);
+    }
+    .dark-mode .mode-indicator{
+      background:rgba(20,20,30,0.5);
+      border-color:rgba(255,255,255,0.08);
+    }
+    .dark-mode input[type=text],
+    .dark-mode textarea{
+      background:rgba(15,15,25,0.5);
+      border-color:rgba(255,255,255,0.08);
+      color:#e2e8f0;
+    }
+    .dark-mode input[type=text]:focus,
+    .dark-mode textarea:focus{
+      background:rgba(20,20,30,0.6);
+      border-color:rgba(255,255,255,0.15);
+    }
+    .dark-mode .note.blue{
+      background:rgba(59,130,246,0.08);
+      border-color:rgba(59,130,246,0.2);
+    }
+    .dark-mode .note.purple{
+      background:rgba(168,85,247,0.08);
+      border-color:rgba(168,85,247,0.2);
+    }
+    .dark-mode .note.pink{
+      background:rgba(236,72,153,0.08);
+      border-color:rgba(236,72,153,0.2);
+    }
+    .dark-mode .note.cyan{
+      background:rgba(6,182,212,0.08);
+      border-color:rgba(6,182,212,0.2);
+    }
+    .dark-mode .note.green{
+      background:rgba(16,185,129,0.08);
+      border-color:rgba(16,185,129,0.2);
+    }
+    .dark-mode .modal{
+      background:rgba(20,20,30,0.85);
+      border-color:rgba(255,255,255,0.1);
+      box-shadow:0 20px 60px rgba(0,0,0,0.8),
+                 inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .dark-mode .modal-overlay{
+      background:rgba(0,0,0,0.7);
+    }
+    .dark-mode .notification{
+      background:rgba(20,20,30,0.9);
+      border-color:rgba(255,255,255,0.1);
+    }
+    .dark-mode .title,
+    .dark-mode .subtitle,
+    .dark-mode label,
+    .dark-mode .modal-title,
+    .dark-mode .notification-title{
+      color:#f1f5f9;
+      text-shadow:0 2px 6px rgba(0,0,0,0.8);
+    }
+    .dark-mode .muted,
+    .dark-mode .small,
+    .dark-mode .modal-message,
+    .dark-mode .notification-message{
+      color:#94a3b8;
+      text-shadow:0 1px 3px rgba(0,0,0,0.6);
+    }
+    .dark-mode .icon-btn{
+      background:rgba(30,30,40,0.5);
+      border-color:rgba(255,255,255,0.1);
+    }
+    .dark-mode .icon-btn:hover{
+      background:rgba(40,40,50,0.7);
+    }
+    
+    .container{max-width:1200px;margin:24px auto;padding:18px;position:relative;z-index:1}
+    
+    header{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:18px;flex-wrap:wrap;gap:10px;
+      animation:slideDown 0.4s ease;
+    }
+    
+    .brand{display:flex;gap:12px;align-items:center}
+    
+    .logo{
+      width:56px;height:56px;border-radius:16px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,0.12);
+      backdrop-filter:blur(20px) saturate(180%);
+      border:2px solid rgba(255,255,255,0.3);
+      box-shadow:0 8px 32px rgba(0,0,0,0.1),
+                 inset 0 1px 0 rgba(255,255,255,0.4);
+      position:relative;
+      overflow:hidden;
+      transition:all 0.3s ease;
+    }
+    
+    .logo::before{
+      content:'';
+      position:absolute;
+      top:-50%;left:-50%;
+      width:200%;height:200%;
+      background:linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform:rotate(45deg);
+      animation:shimmer 2s infinite;
+    }
+    
+    .logo:hover{
+      transform:translateY(-4px) scale(1.05);
+      box-shadow:0 12px 40px rgba(0,0,0,0.2),
+                 inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+    
+    .title{
+      font-size:20px;
+      font-weight:600;
+      text-shadow:0 2px 4px rgba(0,0,0,0.2);
+    }
+    .subtitle{
+      font-size:13px;
+      color:var(--muted);
+      text-shadow:0 1px 2px rgba(0,0,0,0.15);
+    }
+    
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    
+    .btn{
+      background:rgba(255,255,255,0.15);
+      border:1.5px solid rgba(255,255,255,0.3);
+      backdrop-filter:blur(16px) saturate(180%);
+      padding:8px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:all 0.2s ease;
+      position:relative;
+      overflow:hidden;
+      font-weight:500;
+      text-shadow:0 1px 3px rgba(0,0,0,0.2);
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+    }
+    
+    .btn::before{
+      content:'';
+      position:absolute;
+      top:50%;left:50%;
+      width:0;height:0;
+      border-radius:50%;
+      background:rgba(255,255,255,0.4);
+      transform:translate(-50%,-50%);
+      transition:width 0.6s, height 0.6s;
+    }
+    
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      border-color:rgba(255,255,255,0.5);
+    }
+    
+    .btn:active{
+      transform:translateY(0) scale(0.98);
+    }
+    
+    .btn:active::before{
+      width:300px;
+      height:300px;
+      transition:width 0s, height 0s;
+    }
+    
+    .mode-indicator{
+      font-size:13px;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.12);
+      backdrop-filter:blur(16px);
+      border:1.5px solid rgba(255,255,255,0.25);
+      font-weight:500;
+    }
+
+    .top-area{
+      display:flex;gap:16px;align-items:flex-start;margin-bottom:18px;
+      animation:slideDown 0.5s ease;
+    }
+    
+    .left{width:360px}
+    
+    .card{
+      background:rgba(255,255,255,0.12);
+      padding:18px;
+      border-radius:20px;
+      border:1.5px solid rgba(255,255,255,0.3);
+      backdrop-filter:blur(24px) saturate(180%);
+      box-shadow:0 8px 32px rgba(0,0,0,0.1),
+                 inset 0 1px 0 rgba(255,255,255,0.3);
+      position:relative;
+      transition:all 0.2s ease;
+    }
+    
+    .card:hover{
+      border-color:rgba(255,255,255,0.4);
+      box-shadow:0 12px 40px rgba(0,0,0,0.15),
+                 inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    
+    label{
+      font-size:13px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:8px;
+      font-weight:500;
+      text-shadow:0 1px 2px rgba(0,0,0,0.15);
+    }
+    
+    input[type=text],textarea{
+      width:100%;
+      box-sizing:border-box;
+      padding:12px;
+      border-radius:12px;
+      border:1.5px solid rgba(255,255,255,0.2);
+      background:rgba(255,255,255,0.08);
+      color:inherit;
+      backdrop-filter:blur(10px);
+      transition:all 0.2s ease;
+      font-family:inherit;
+      text-shadow:0 1px 2px rgba(0,0,0,0.15);
+    }
+    
+    input[type=text]:focus,textarea:focus{
+      outline:none;
+      border-color:rgba(255,255,255,0.5);
+      background:rgba(255,255,255,0.12);
+      box-shadow:0 0 0 3px rgba(255,255,255,0.1);
+    }
+    
+    textarea{min-height:86px;resize:vertical}
+    .right{flex:1}
+
+    .search{display:flex;gap:10px;margin-bottom:12px}
+    .search input{
+      flex:1;
+      padding:12px;
+      border-radius:12px;
+      border:1.5px solid rgba(255,255,255,0.25);
+      background:rgba(255,255,255,0.1);
+      backdrop-filter:blur(16px);
+    }
+
+    #notes{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:14px;
+    }
+    
+    .note{
+      padding:16px;
+      border-radius:18px;
+      position:relative;
+      overflow:hidden;
+      transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor:pointer;
+      animation:scaleIn 0.3s ease;
+    }
+    
+    .note::before{
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;bottom:0;
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+      opacity:0;
+      transition:opacity 0.3s ease;
+      z-index:0;
+    }
+    
+    .note:hover::before{opacity:1}
+    
+    .note:hover{
+      transform:translateY(-6px) scale(1.02);
+      box-shadow:0 16px 48px rgba(0,0,0,0.2),
+                 inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    
+    .note.blue{
+      background:rgba(59,130,246,0.15);
+      border:1.5px solid rgba(59,130,246,0.4);
+    }
+    .note.blue:hover{box-shadow:0 16px 48px rgba(59,130,246,0.3)}
+    
+    .note.purple{
+      background:rgba(168,85,247,0.15);
+      border:1.5px solid rgba(168,85,247,0.4);
+    }
+    .note.purple:hover{box-shadow:0 16px 48px rgba(168,85,247,0.3)}
+    
+    .note.pink{
+      background:rgba(236,72,153,0.15);
+      border:1.5px solid rgba(236,72,153,0.4);
+    }
+    .note.pink:hover{box-shadow:0 16px 48px rgba(236,72,153,0.3)}
+    
+    .note.cyan{
+      background:rgba(6,182,212,0.15);
+      border:1.5px solid rgba(6,182,212,0.4);
+    }
+    .note.cyan:hover{box-shadow:0 16px 48px rgba(6,182,212,0.3)}
+    
+    .note.green{
+      background:rgba(16,185,129,0.15);
+      border:1.5px solid rgba(16,185,129,0.4);
+    }
+    .note.green:hover{box-shadow:0 16px 48px rgba(16,185,129,0.3)}
+    
+    .note .title{
+      font-weight:600;
+      margin-bottom:6px;
+      position:relative;
+      z-index:1;
+      text-shadow:0 2px 4px rgba(0,0,0,0.3);
+      color:#ffffff;
+    }
+    .note .text{
+      white-space:pre-wrap;
+      cursor:pointer;
+      position:relative;
+      z-index:1;
+      text-shadow:0 1px 3px rgba(0,0,0,0.25);
+      color:#f8fafc;
+      line-height:1.5;
+    }
+    .note .meta{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:relative;
+      z-index:1;
+      text-shadow:0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .actions{
+      position:absolute;
+      top:10px;
+      right:10px;
+      display:flex;
+      gap:6px;
+      z-index:2;
+      opacity:0;
+      transform:translateY(-10px);
+      transition:all 0.2s ease;
+    }
+    
+    .note:hover .actions{
+      opacity:1;
+      transform:translateY(0);
+    }
+    
+    .icon-btn{
+      background:rgba(255,255,255,0.2);
+      border:1px solid rgba(255,255,255,0.3);
+      padding:6px 8px;
+      border-radius:8px;
+      cursor:pointer;
+      backdrop-filter:blur(10px);
+      transition:all 0.2s ease;
+    }
+    
+    .icon-btn:hover{
+      background:rgba(255,255,255,0.3);
+      transform:scale(1.1);
+    }
+
+    /* Custom Modal System */
+    .modal-overlay{
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:10000;
+      animation:fadeIn 0.3s ease;
+      padding:20px;
+    }
+    
+    @keyframes fadeIn{
+      from{opacity:0}
+      to{opacity:1}
+    }
+    
+    .modal{
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(40px) saturate(180%);
+      border:2px solid rgba(255,255,255,0.3);
+      border-radius:24px;
+      padding:32px;
+      max-width:480px;
+      width:100%;
+      box-shadow:0 20px 60px rgba(0,0,0,0.3),
+                 inset 0 1px 0 rgba(255,255,255,0.4);
+      animation:modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position:relative;
+      overflow:hidden;
+    }
+    
+    @keyframes modalSlideIn{
+      from{
+        opacity:0;
+        transform:scale(0.8) translateY(40px);
+      }
+      to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+      }
+    }
+    
+    .modal::before{
+      content:'';
+      position:absolute;
+      top:-50%;
+      left:-50%;
+      width:200%;
+      height:200%;
+      background:linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation:shimmer 2s infinite;
+    }
+    
+    .modal-icon{
+      width:64px;
+      height:64px;
+      margin:0 auto 20px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:32px;
+      position:relative;
+      z-index:1;
+    }
+    
+    .modal-icon.success{
+      background:linear-gradient(135deg, rgba(16,185,129,0.3), rgba(16,185,129,0.1));
+      border:2px solid rgba(16,185,129,0.5);
+      box-shadow:0 0 30px rgba(16,185,129,0.3);
+    }
+    
+    .modal-icon.warning{
+      background:linear-gradient(135deg, rgba(245,158,11,0.3), rgba(245,158,11,0.1));
+      border:2px solid rgba(245,158,11,0.5);
+      box-shadow:0 0 30px rgba(245,158,11,0.3);
+    }
+    
+    .modal-icon.error{
+      background:linear-gradient(135deg, rgba(239,68,68,0.3), rgba(239,68,68,0.1));
+      border:2px solid rgba(239,68,68,0.5);
+      box-shadow:0 0 30px rgba(239,68,68,0.3);
+    }
+    
+    .modal-icon.info{
+      background:linear-gradient(135deg, rgba(59,130,246,0.3), rgba(59,130,246,0.1));
+      border:2px solid rgba(59,130,246,0.5);
+      box-shadow:0 0 30px rgba(59,130,246,0.3);
+    }
+    
+    .modal-title{
+      font-size:24px;
+      font-weight:600;
+      text-align:center;
+      margin-bottom:12px;
+      position:relative;
+      z-index:1;
+    }
+    
+    .modal-message{
+      text-align:center;
+      line-height:1.6;
+      margin-bottom:24px;
+      color:var(--muted);
+      white-space:pre-line;
+      position:relative;
+      z-index:1;
+    }
+    
+    .modal-buttons{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      position:relative;
+      z-index:1;
+    }
+    
+    .modal-btn{
+      padding:12px 28px;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      font-size:15px;
+      transition:all 0.3s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    
+    .modal-btn.primary{
+      background:linear-gradient(135deg, var(--blue), var(--purple));
+      color:white;
+      box-shadow:0 4px 16px rgba(59,130,246,0.4);
+    }
+    
+    .modal-btn.primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 24px rgba(59,130,246,0.5);
+    }
+    
+    .modal-btn.danger{
+      background:linear-gradient(135deg, var(--red), #dc2626);
+      color:white;
+      box-shadow:0 4px 16px rgba(239,68,68,0.4);
+    }
+    
+    .modal-btn.danger:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 24px rgba(239,68,68,0.5);
+    }
+    
+    .modal-btn.secondary{
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(10px);
+      border:1.5px solid rgba(255,255,255,0.3);
+      color:inherit;
+    }
+    
+    .modal-btn.secondary:hover{
+      background:rgba(255,255,255,0.25);
+      transform:translateY(-2px);
+    }
+
+    /* Notification System */
+    .notification-container{
+      position:fixed;
+      top:20px;
+      right:20px;
+      z-index:10001;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-width:400px;
+    }
+    
+    .notification{
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(24px) saturate(180%);
+      border:1.5px solid rgba(255,255,255,0.3);
+      border-radius:16px;
+      padding:16px 20px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+      animation:slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position:relative;
+      overflow:hidden;
+    }
+    
+    @keyframes slideInRight{
+      from{
+        opacity:0;
+        transform:translateX(100px);
+      }
+      to{
+        opacity:1;
+        transform:translateX(0);
+      }
+    }
+    
+    .notification::before{
+      content:'';
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:4px;
+    }
+    
+    .notification.success::before{background:var(--green)}
+    .notification.error::before{background:var(--red)}
+    .notification.warning::before{background:var(--amber)}
+    .notification.info::before{background:var(--blue)}
+    
+    .notification-icon{
+      font-size:24px;
+      flex-shrink:0;
+    }
+    
+    .notification-content{
+      flex:1;
+    }
+    
+    .notification-title{
+      font-weight:600;
+      margin-bottom:4px;
+    }
+    
+    .notification-message{
+      font-size:13px;
+      color:var(--muted);
+    }
+    
+    .notification-close{
+      background:rgba(255,255,255,0.2);
+      border:none;
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:all 0.2s ease;
+      flex-shrink:0;
+    }
+    
+    .notification-close:hover{
+      background:rgba(255,255,255,0.3);
+      transform:scale(1.1);
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:22px;
+      background:rgba(10,10,10,0.85);
+      backdrop-filter:blur(20px);
+      color:#fff;
+      padding:12px 18px;
+      border-radius:12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      z-index:9999;
+      box-shadow:0 8px 32px rgba(0,0,0,0.3);
+      border:1px solid rgba(255,255,255,0.1);
+      animation:slideUp 0.4s ease;
+    }
+    
+    @keyframes slideUp{
+      from{
+        opacity:0;
+        transform:translateX(-50%) translateY(20px);
+      }
+      to{
+        opacity:1;
+        transform:translateX(-50%) translateY(0);
+      }
+    }
+    
+    .hidden{display:none}
+
+    .small{font-size:12px;color:var(--muted)}
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.08);
+    }
+
+    /* Mobile enhancements */
+    @media(max-width:800px){
+      .container{padding:12px;margin:12px auto}
+      
+      header{
+        flex-direction:column;
+        align-items:stretch;
+        gap:12px;
+      }
+      
+      .brand{
+        justify-content:center;
+      }
+      
+      .controls{
+        justify-content:center;
+        flex-wrap:wrap;
+      }
+      
+      .top-area{
+        flex-direction:column;
+        gap:12px;
+      }
+      
+      .left{width:100%}
+      
+      .card{
+        padding:14px;
+      }
+      
+      .btn{
+        font-size:15px;
+        padding:10px 16px;
+        flex:1;
+        min-width:100px;
+      }
+      
+      input[type=text],textarea{
+        font-size:16px;
+        padding:14px;
+      }
+      
+      textarea{
+        min-height:120px;
+      }
+      
+      #notes{
+        grid-template-columns:1fr;
+        gap:12px;
+      }
+      
+      .note{
+        padding:14px;
+      }
+      
+      .note .actions{
+        opacity:1;
+        transform:translateY(0);
+        position:relative;
+        top:auto;
+        right:auto;
+        margin-top:12px;
+        justify-content:flex-end;
+      }
+      
+      .icon-btn{
+        padding:8px 10px;
+        font-size:16px;
+      }
+      
+      .notification-container{
+        top:10px;
+        right:10px;
+        left:10px;
+        max-width:none;
+      }
+      
+      .notification{
+        padding:12px 16px;
+      }
+      
+      .modal{
+        padding:24px;
+        margin:10px;
+        max-width:calc(100vw - 20px);
+      }
+      
+      .modal-title{
+        font-size:20px;
+      }
+      
+      .modal-buttons{
+        flex-direction:column;
+        gap:10px;
+      }
+      
+      .modal-btn{
+        width:100%;
+        padding:14px;
+      }
+      
+      .fab{
+        display:flex;
+        width:56px;
+        height:56px;
+        bottom:16px;
+        right:16px;
+      }
+      
+      .toast{
+        bottom:80px;
+        left:10px;
+        right:10px;
+        transform:none;
+        width:auto;
+      }
+      
+      .search{
+        flex-direction:column;
+      }
+      
+      .search input{
+        width:100%;
+      }
+      
+      .logo{
+        width:48px;
+        height:48px;
+        font-size:24px;
+      }
+      
+      .title{
+        font-size:18px;
+      }
+      
+      .subtitle{
+        font-size:12px;
+      }
+    }
+    
+    /* Touch-friendly improvements */
+    @media(hover: none) and (pointer: coarse){
+      .btn,
+      .icon-btn,
+      .modal-btn{
+        min-height:44px;
+        min-width:44px;
+      }
+      
+      .note{
+        cursor:default;
+      }
+      
+      .note:active{
+        transform:scale(0.98);
+      }
+    }
+    
+    /* Landscape mobile */
+    @media(max-width:800px) and (orientation:landscape){
+      .container{
+        max-width:100%;
+      }
+      
+      .top-area{
+        flex-direction:row;
+      }
+      
+      .left{
+        width:40%;
+      }
+      
+      .right{
+        width:60%;
+      }
+    }
+    
+    .fab{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      z-index:999;
+      background:linear-gradient(135deg, var(--purple), var(--pink));
+      color:white;
+      border:none;
+      border-radius:50%;
+      width:60px;
+      height:60px;
+      font-size:28px;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 24px rgba(168,85,247,0.4);
+      cursor:pointer;
+      transition:all 0.3s ease;
+      -webkit-tap-highlight-color:transparent;
+    }
+    
+    .fab:hover{
+      transform:scale(1.1) rotate(90deg);
+      box-shadow:0 12px 32px rgba(168,85,247,0.6);
+    }
+    
+    .fab:active{
+      transform:scale(0.95) rotate(90deg);
+    }
+    
+    @media(max-width:800px){
+      .fab{
+        width:56px;
+        height:56px;
+        font-size:26px;
+        box-shadow:0 6px 20px rgba(168,85,247,0.5);
+      }
+    }
+    
+    .highlight{
+      background:linear-gradient(90deg,rgba(255,241,184,0.4),transparent);
+      padding:2px 4px;
+      border-radius:4px;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div class="logo">🧊</div>
-      <div class="title-wrap">
-        <div class="title">Tahleel Notes</div>
-        <div class="subtitle">Your modern crystal glass notes</div>
+  <div class="notification-container" id="notificationContainer"></div>
+  
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">🧊</div>
+        <div>
+          <div class="title">Tahleel Notes</div>
+          <div class="subtitle">A website made out of Boredom</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div id="modeBadge" class="mode-indicator badge">Mode: <span id="modeLabel">Local</span></div>
+        <button id="modeToggle" class="btn">Switch Mode</button>
+        <button id="themeToggle" class="btn">🌙 Dark</button>
+      </div>
+    </header>
+
+    <div class="top-area">
+      <div class="left card">
+        <label for="titleInput">Title</label>
+        <input id="titleInput" type="text" placeholder="Short title..." />
+        <label for="textInput" style="margin-top:8px">Text</label>
+        <textarea id="textInput" placeholder="Write your note..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button id="addBtn" class="btn">Add Note</button>
+          <button id="addClearBtn" class="btn">Add & Clear</button>
+          <button id="selectModeBtn" class="btn">Select</button>
+        </div>
+        <div style="margin-top:10px" class="small">Shortcuts: <strong>Ctrl/Cmd+N</strong> New • <strong>Ctrl/Cmd+K</strong> Search • <strong>Ctrl/Cmd+S</strong> Export</div>
+      </div>
+
+
+      <div class="right">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:10px;">
+            <div class="search" style="flex:1;min-width:200px;">
+              <input id="searchInput" type="text" placeholder="Search title or text (Ctrl/Cmd+K)" />
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button id="exportBtn" class="btn">Export</button>
+              <button id="importBtn" class="btn">Import</button>
+              <button id="clearAllBtn" class="btn" style="color:#ef4444">Clear</button>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+            <div class="small">Notes (<span id="count">0</span>)</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button id="deleteSelectedBtn" class="btn" style="color:#ef4444">Delete Selected</button>
+              <button id="selectAllBtn" class="btn">Select All</button>
+              <button id="deselectAllBtn" class="btn">Deselect</button>
+            </div>
+          </div>
+
+          <div id="notes" aria-live="polite"></div>
+        </div>
       </div>
     </div>
-    <div class="toolbar">
-      <button id="themeToggle">🌙 Dark</button>
-      <button id="clearAll">🗑️ Clear</button>
-    </div>
-  </header>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="🔍 Search notes by title or content...">
+    <div id="toast" class="toast hidden"><span id="toastText"></span><button id="undoBtn" class="btn">Undo</button></div>
+    <input id="fileInput" type="file" accept="application/json" class="hidden" />
   </div>
 
-  <div class="input-section">
-    <input type="text" id="noteTitle" placeholder="Title">
-    <textarea id="noteText" rows="4" placeholder="Write your note..."></textarea>
-    <button id="createNote">Create Note</button>
-  </div>
-
-  <div class="notes" id="notes"></div>
-  <div class="toast" id="toast">Copied!</div>
+  <button id="fabAdd" class="fab">＋</button>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC6KT2ARiHfTquxCYqzaOGSmrrlat0Z3J8",
@@ -85,77 +1086,843 @@
       appId: "1:82024240139:web:bcd38c713b1bebe6dc230e"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const notesRef = collection(db, "notes");
-
-    const notesContainer = document.getElementById('notes');
-    const createBtn = document.getElementById('createNote');
-    const noteTitle = document.getElementById('noteTitle');
-    const noteText = document.getElementById('noteText');
-    const clearBtn = document.getElementById('clearAll');
+    // DOM refs
+    const modeLabel = document.getElementById('modeLabel');
+    const modeBadge = document.getElementById('modeBadge');
+    const modeToggle = document.getElementById('modeToggle');
     const themeToggle = document.getElementById('themeToggle');
-    const toast = document.getElementById('toast');
+    const titleInput = document.getElementById('titleInput');
+    const textInput = document.getElementById('textInput');
+    const addBtn = document.getElementById('addBtn');
+    const addClearBtn = document.getElementById('addClearBtn');
+    const selectModeBtn = document.getElementById('selectModeBtn');
+
+
     const searchInput = document.getElementById('searchInput');
+    const notesEl = document.getElementById('notes');
+    const countEl = document.getElementById('count');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const fileInput = document.getElementById('fileInput');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const deselectAllBtn = document.getElementById('deselectAllBtn');
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    const undoBtn = document.getElementById('undoBtn');
+    const fab = document.getElementById('fabAdd');
+    const notificationContainer = document.getElementById('notificationContainer');
 
-    function showToast(msg='Copied!'){
-      toast.textContent=msg;
-      toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'),1200);
+    // State
+    const MODE_KEY = 'tahleel_notes_mode_v1';
+    const DEFAULT_MODE = 'local';
+    let mode = localStorage.getItem(MODE_KEY) || DEFAULT_MODE;
+    let notes = [];
+    let selectedSet = new Set();
+    let selectModeOn = false;
+    let db = null;
+    let notesColRef = null;
+    let unsubscribeSnapshot = null;
+    let lastDeleted = null;
+    let toastTimer = null;
+
+    // Color palette for notes
+    const noteColors = ['blue', 'purple', 'pink', 'cyan', 'green'];
+    
+    // Utilities
+    function showToast(msg, showUndo=false){
+      toastText.textContent = msg;
+      toast.classList.remove('hidden');
+      undoBtn.style.display = showUndo ? 'inline-block' : 'none';
+      if(toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>{ toast.classList.add('hidden'); lastDeleted = null; }, 6000);
     }
+    
+    function formatDate(ts){ return new Date(ts).toLocaleString(); }
 
-    function renderNotes(snapshot){
-      notesContainer.innerHTML='';
-      const queryText = searchInput.value.toLowerCase();
-      snapshot.docs
-        .filter(doc => {
-          const data = doc.data();
-          return data.title.toLowerCase().includes(queryText) || data.text.toLowerCase().includes(queryText);
-        })
-        .forEach(docSnap=>{
-          const note=docSnap.data();
-          const id=docSnap.id;
-          const card=document.createElement('div');card.className='card';
-          card.innerHTML=`
-            <div class='note-title'>${note.title}</div>
-            <div class='note-text'>${note.text}</div>
-            <div class='actions'>
-              <button class='icon-btn copy' title='Copy'>📋</button>
-              <button class='icon-btn edit' title='Edit'>✏️</button>
-              <button class='icon-btn del' title='Delete'>🗑️</button>
-            </div>`;
-          card.querySelector('.copy').onclick=(e)=>{e.stopPropagation();navigator.clipboard.writeText(note.text);showToast('Text copied!');};
-          card.querySelector('.del').onclick=async(e)=>{e.stopPropagation();await deleteDoc(doc(db,"notes",id));};
-          card.querySelector('.edit').onclick=async(e)=>{
-            e.stopPropagation();
-            const newTitle=prompt('Edit title',note.title)||note.title;
-            const newText=prompt('Edit text',note.text)||note.text;
-            await updateDoc(doc(db,"notes",id),{title:newTitle,text:newText});
-          };
-          notesContainer.appendChild(card);
+    // Custom Modal System
+    function showModal({title, message, icon='info', buttons=[]}){
+      return new Promise((resolve)=>{
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        
+        const iconEl = document.createElement('div');
+        iconEl.className = `modal-icon ${icon}`;
+        const iconMap = {
+          success: '✓',
+          warning: '⚠',
+          error: '✕',
+          info: 'ℹ'
+        };
+        iconEl.textContent = iconMap[icon] || 'ℹ';
+        
+        const titleEl = document.createElement('div');
+        titleEl.className = 'modal-title';
+        titleEl.textContent = title;
+        
+        const messageEl = document.createElement('div');
+        messageEl.className = 'modal-message';
+        messageEl.textContent = message;
+        
+        const buttonsEl = document.createElement('div');
+        buttonsEl.className = 'modal-buttons';
+        
+        buttons.forEach(btn=>{
+          const button = document.createElement('button');
+          button.className = `modal-btn ${btn.type || 'secondary'}`;
+          button.textContent = btn.text;
+          button.addEventListener('click', ()=>{
+            overlay.remove();
+            resolve(btn.value);
+          });
+          buttonsEl.appendChild(button);
         });
+        
+        modal.appendChild(iconEl);
+        modal.appendChild(titleEl);
+        modal.appendChild(messageEl);
+        modal.appendChild(buttonsEl);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        overlay.addEventListener('click', (e)=>{
+          if(e.target === overlay){
+            overlay.remove();
+            resolve(null);
+          }
+        });
+      });
+    }
+    
+    // Notification System
+    function showNotification({title, message, type='info', duration=4000}){
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      
+      const iconMap = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+      };
+      
+      notification.innerHTML = `
+        <div class="notification-icon">${iconMap[type]}</div>
+        <div class="notification-content">
+          <div class="notification-title">${title}</div>
+          ${message ? `<div class="notification-message">${message}</div>` : ''}
+        </div>
+        <button class="notification-close">✕</button>
+      `;
+      
+      const closeBtn = notification.querySelector('.notification-close');
+      closeBtn.addEventListener('click', ()=>{
+        notification.style.animation = 'slideInRight 0.3s ease reverse';
+        setTimeout(()=> notification.remove(), 300);
+      });
+      
+      notificationContainer.appendChild(notification);
+      
+      if(duration > 0){
+        setTimeout(()=>{
+          if(notification.parentElement){
+            notification.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(()=> notification.remove(), 300);
+          }
+        }, duration);
+      }
     }
 
-    // Real-time listener
-    onSnapshot(query(notesRef, orderBy("created","desc")),renderNotes);
+    // Mode messages
+    const CLOUD_NOTICE = `You're switching to Cloud Sync Mode.\nYour notes will be stored securely in the cloud.\nOnly you can view, edit, delete, and access them.\nNotes saved in Local Mode will not appear here until you switch back.`;
+    const LOCAL_NOTICE = `You're switching to Local Mode.\nNotes created here are stored only on this device and will not sync to the cloud.\nIf you clear browser data, your notes will be lost unless you export them first.`;
 
-    createBtn.onclick=async()=>{
-      const title=noteTitle.value.trim();
-      const text=noteText.value.trim();
-      if(!text) return;
-      await addDoc(notesRef,{title:title||'Untitled',text,created:Date.now()});
-      noteTitle.value='';noteText.value='';
-    };
 
-    clearBtn.onclick=async()=>{
-      if(confirm('Delete all notes?')){
-        const snapshot = await onSnapshot(notesRef,()=>{});
-        snapshot.forEach(async docSnap => await deleteDoc(doc(db,"notes",docSnap.id)));
+    // Storage: Local
+    const LS_KEY = 'tahleel_notes_data_v1';
+    function loadLocal(){ 
+      try{ 
+        notes = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); 
+      }catch(e){ 
+        notes = []; 
+      } 
+      render(); 
+    }
+    
+    function saveLocal(){ 
+      localStorage.setItem(LS_KEY, JSON.stringify(notes)); 
+      render(); 
+    }
+    
+    function addLocal(note){ 
+      note.id = note.id || (Date.now().toString(36)+Math.random().toString(36).slice(2,8)); 
+      note.createdAt = note.createdAt || Date.now(); 
+      note.updatedAt = Date.now(); 
+      note.color = note.color || noteColors[Math.floor(Math.random() * noteColors.length)];
+      notes.unshift(note); 
+      saveLocal(); 
+    }
+    
+    function updateLocal(id, patch){ 
+      const i = notes.findIndex(n=>n.id===id); 
+      if(i===-1) return; 
+      notes[i] = {...notes[i], ...patch, updatedAt:Date.now()}; 
+      saveLocal(); 
+    }
+    
+    function deleteLocal(id){ 
+      const i = notes.findIndex(n=>n.id===id); 
+      if(i===-1) return null; 
+      const doc = notes[i]; 
+      notes.splice(i,1); 
+      saveLocal(); 
+      return doc; 
+    }
+
+    // Storage: Cloud (Firestore)
+    function initFirebase(){
+      try{
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        notesColRef = collection(db, 'notes');
+      }catch(e){ 
+        console.error('Firebase init error', e); 
       }
-    };
+    }
 
-    themeToggle.onclick=()=>{document.body.classList.toggle('dark-mode');themeToggle.textContent=document.body.classList.contains('dark-mode')?'🌤 Light':'🌙 Dark';};
-    searchInput.oninput=()=>onSnapshot(query(notesRef, orderBy("created","desc")),renderNotes);
+    async function addCloud(note){ 
+      note.createdAt = note.createdAt || Date.now(); 
+      note.updatedAt = Date.now(); 
+      note.color = note.color || noteColors[Math.floor(Math.random() * noteColors.length)];
+      await addDoc(notesColRef, note); 
+    }
+    
+    async function updateCloud(id, patch){ 
+      const dref = doc(db, 'notes', id); 
+      await updateDoc(dref, {...patch, updatedAt:Date.now()}); 
+    }
+    
+    async function deleteCloud(id){ 
+      const dref = doc(db, 'notes', id); 
+      await deleteDoc(dref); 
+    }
+
+    function startCloudListener(){
+      if(!db) initFirebase();
+      if(unsubscribeSnapshot) unsubscribeSnapshot();
+      const q = query(notesColRef, orderBy('updatedAt','desc'));
+      unsubscribeSnapshot = onSnapshot(q, snap=>{
+        notes = snap.docs.map(d=>({...d.data(), id:d.id}));
+        render();
+      });
+    }
+
+    function stopCloudListener(){ 
+      if(unsubscribeSnapshot){ 
+        unsubscribeSnapshot(); 
+        unsubscribeSnapshot = null; 
+      } 
+    }
+
+
+    // Rendering
+    function render(){
+      modeLabel.textContent = mode === 'local' ? 'Local' : 'Cloud';
+      modeBadge.title = mode === 'local' ? 'Local Mode — notes stored only on this device' : 'Cloud Sync Mode — notes stored in Firestore';
+
+      const q = (searchInput.value||'').toLowerCase();
+      const filtered = notes.filter(n=>{ 
+        if(!q) return true; 
+        return (n.title||'').toLowerCase().includes(q) || (n.text||'').toLowerCase().includes(q); 
+      });
+      
+      filtered.sort((a,b)=>{ 
+        if(a.pinned && !b.pinned) return -1; 
+        if(!a.pinned && b.pinned) return 1; 
+        return (b.updatedAt||0) - (a.updatedAt||0); 
+      });
+
+      notesEl.innerHTML = '';
+      filtered.forEach(n=>{
+        const div = document.createElement('div'); 
+        div.className = `note card ${n.color || 'blue'}`;
+
+        const title = document.createElement('div'); 
+        title.className = 'title'; 
+        title.textContent = n.title || 'Untitled';
+        
+        const text = document.createElement('div'); 
+        text.className = 'text'; 
+        text.textContent = n.text || '';
+        text.title = 'Click to copy';
+        text.addEventListener('click', async ()=>{ 
+          try{ 
+            await navigator.clipboard.writeText(n.text||''); 
+            showNotification({title:'Copied!', message:'Text copied to clipboard', type:'success', duration:2000});
+          }catch(e){ 
+            fallbackCopy(n.text||''); 
+          } 
+        });
+
+        const meta = document.createElement('div'); 
+        meta.className = 'meta';
+        const leftMeta = document.createElement('div'); 
+        leftMeta.textContent = formatDate(n.updatedAt||n.createdAt||Date.now());
+        const rightMeta = document.createElement('div'); 
+        rightMeta.style.display='flex'; 
+        rightMeta.style.gap='8px';
+
+        const actions = document.createElement('div'); 
+        actions.className = 'actions';
+        const copyBtn = elBtn('📋','Copy', async (e)=>{ 
+          e.stopPropagation(); 
+          try{ 
+            await navigator.clipboard.writeText(n.text||''); 
+            showNotification({title:'Copied', type:'success', duration:2000});
+          }catch(e){ 
+            fallbackCopy(n.text||''); 
+          } 
+        });
+        const editBtn = elBtn('✏️','Edit', (e)=>{ 
+          e.stopPropagation(); 
+          openEditor(n); 
+        });
+        const dupBtn = elBtn('⎘','Duplicate', async (e)=>{ 
+          e.stopPropagation(); 
+          const clone = {...n}; 
+          delete clone.id; 
+          clone.createdAt = Date.now(); 
+          clone.updatedAt = Date.now(); 
+          if(mode==='local'){ 
+            addLocal(clone); 
+            showNotification({title:'Duplicated', type:'success', duration:2000});
+          } else { 
+            await addCloud(clone); 
+            showNotification({title:'Duplicated', type:'success', duration:2000});
+          } 
+        });
+        
+        const pinBtn = elBtn(n.pinned ? '📌' : '📍', 'Pin', async (e)=>{ 
+          e.stopPropagation(); 
+          if(mode==='local'){ 
+            updateLocal(n.id,{pinned: !n.pinned}); 
+          } else { 
+            await updateCloud(n.id,{pinned: !n.pinned}); 
+          } 
+        });
+        const delBtn = elBtn('🗑️','Delete', async (e)=>{ 
+          e.stopPropagation(); 
+          await handleDelete(n); 
+        });
+
+        actions.appendChild(copyBtn); 
+        actions.appendChild(editBtn); 
+        actions.appendChild(dupBtn); 
+        actions.appendChild(pinBtn); 
+        actions.appendChild(delBtn);
+
+        const checkbox = document.createElement('input'); 
+        checkbox.type='checkbox'; 
+        checkbox.style.marginRight='8px'; 
+        checkbox.checked = selectedSet.has(n.id);
+        checkbox.addEventListener('change', (ev)=>{ 
+          if(checkbox.checked) selectedSet.add(n.id); 
+          else selectedSet.delete(n.id); 
+          div.classList.toggle('selected', checkbox.checked); 
+        });
+        if(!selectModeOn) checkbox.style.display = 'none';
+
+        rightMeta.appendChild(checkbox);
+        meta.appendChild(leftMeta); 
+        meta.appendChild(rightMeta);
+
+        div.appendChild(actions);
+        div.appendChild(title);
+        div.appendChild(text);
+        div.appendChild(meta);
+        notesEl.appendChild(div);
+      });
+
+      countEl.textContent = notes.length;
+    }
+
+    function elBtn(label, title, onClick){ 
+      const b = document.createElement('button'); 
+      b.className='icon-btn'; 
+      b.title=title; 
+      b.textContent = label; 
+      b.addEventListener('click', onClick); 
+      return b; 
+    }
+
+    // CRUD & interactions
+    addBtn.addEventListener('click', async ()=>{ 
+      const t = titleInput.value.trim(); 
+      const x = textInput.value.trim(); 
+      if(!x){ 
+        showNotification({title:'Text Required', message:'Please enter note text', type:'warning', duration:3000});
+        return; 
+      } 
+      const note = { title: t || 'Untitled', text: x, pinned:false }; 
+      if(mode==='local'){ 
+        addLocal(note); 
+      } else { 
+        await addCloud(note); 
+      } 
+      showNotification({title:'Note Added', type:'success', duration:2000});
+      titleInput.value=''; 
+      textInput.value=''; 
+      textInput.focus(); 
+    });
+    
+    addClearBtn.addEventListener('click', async ()=>{ 
+      const t = titleInput.value.trim(); 
+      const x = textInput.value.trim(); 
+      if(!x) return; 
+      const note = { title: t || 'Untitled', text: x, pinned:false }; 
+      if(mode==='local'){ 
+        addLocal(note); 
+      } else { 
+        await addCloud(note); 
+      } 
+      showNotification({title:'Note Added', type:'success', duration:2000});
+      titleInput.value=''; 
+      textInput.value=''; 
+      titleInput.focus(); 
+    });
+
+    function openEditor(n){
+      const wrapper = document.createElement('div'); 
+      wrapper.className='modal-overlay';
+      
+      const modal = document.createElement('div');
+      modal.className='modal';
+      modal.style.maxWidth='700px';
+      
+      const modalTitle = document.createElement('div');
+      modalTitle.className='modal-title';
+      modalTitle.textContent='Edit Note';
+      modalTitle.style.marginBottom='20px';
+      
+      const tInput = document.createElement('input'); 
+      tInput.value = n.title; 
+      tInput.style.width='100%'; 
+      tInput.style.marginBottom='12px';
+      tInput.style.padding='12px';
+      tInput.style.borderRadius='12px';
+      tInput.style.border='1.5px solid rgba(255,255,255,0.3)';
+      tInput.style.background='rgba(255,255,255,0.1)';
+      tInput.style.backdropFilter='blur(10px)';
+      tInput.style.color='inherit';
+      tInput.style.fontFamily='inherit';
+      
+      const ta = document.createElement('textarea'); 
+      ta.value = n.text; 
+      ta.style.width='100%'; 
+      ta.style.minHeight='180px';
+      ta.style.padding='12px';
+      ta.style.borderRadius='12px';
+      ta.style.border='1.5px solid rgba(255,255,255,0.3)';
+      ta.style.background='rgba(255,255,255,0.1)';
+      ta.style.backdropFilter='blur(10px)';
+      ta.style.color='inherit';
+      ta.style.fontFamily='inherit';
+      ta.style.resize='vertical';
+      
+      const buttonsDiv = document.createElement('div');
+      buttonsDiv.className='modal-buttons';
+      buttonsDiv.style.marginTop='20px';
+      
+      const saveBtn = document.createElement('button'); 
+      saveBtn.className='modal-btn primary'; 
+      saveBtn.textContent='Save Changes';
+      
+      const cancelBtn = document.createElement('button'); 
+      cancelBtn.className='modal-btn secondary'; 
+      cancelBtn.textContent='Cancel';
+      
+      buttonsDiv.appendChild(cancelBtn);
+      buttonsDiv.appendChild(saveBtn);
+      
+      modal.appendChild(modalTitle);
+      modal.appendChild(tInput); 
+      modal.appendChild(ta); 
+      modal.appendChild(buttonsDiv);
+      wrapper.appendChild(modal);
+      document.body.appendChild(wrapper);
+      
+      tInput.focus();
+      
+      wrapper.addEventListener('click', (e)=>{
+        if(e.target === wrapper) wrapper.remove();
+      });
+      
+      cancelBtn.addEventListener('click', ()=>{ wrapper.remove(); });
+      
+      saveBtn.addEventListener('click', async ()=>{ 
+        const patch = { title: tInput.value || 'Untitled', text: ta.value }; 
+        if(mode==='local'){ 
+          updateLocal(n.id, patch); 
+          showNotification({title:'Saved', type:'success', duration:2000});
+        } else { 
+          await updateCloud(n.id, patch); 
+          showNotification({title:'Saved', type:'success', duration:2000});
+        } 
+        wrapper.remove(); 
+      });
+    }
+
+    async function handleDelete(n){ 
+      const result = await showModal({
+        title: 'Delete Note?',
+        message: `Are you sure you want to delete "${n.title || 'Untitled'}"?\nThis action cannot be undone.`,
+        icon: 'warning',
+        buttons: [
+          {text: 'Cancel', type: 'secondary', value: false},
+          {text: 'Delete', type: 'danger', value: true}
+        ]
+      });
+      
+      if(!result) return;
+      
+      if(mode==='local'){ 
+        const deleted = deleteLocal(n.id); 
+        lastDeleted = { mode:'local', data:deleted, id:deleted.id }; 
+        showToast('Deleted "'+(deleted.title||'Untitled')+'"', true); 
+      } else { 
+        lastDeleted = { mode:'cloud', data:{...n}, id:n.id }; 
+        await deleteCloud(n.id); 
+        showToast('Deleted "'+(n.title||'Untitled')+'"', true); 
+      } 
+    }
+
+    undoBtn.addEventListener('click', async ()=>{
+      if(!lastDeleted) return;
+      if(lastDeleted.mode==='local'){ 
+        notes.push(lastDeleted.data); 
+        saveLocal(); 
+        showNotification({title:'Restored', type:'success', duration:2000});
+        lastDeleted=null; 
+        toast.classList.add('hidden'); 
+      }
+      else if(lastDeleted.mode==='cloud'){ 
+        const toRestore = {...lastDeleted.data}; 
+        delete toRestore.id; 
+        await addCloud(toRestore); 
+        showNotification({title:'Restored', type:'success', duration:2000});
+        lastDeleted=null; 
+        toast.classList.add('hidden'); 
+      }
+      else if(lastDeleted.mode==='local_bulk'){ 
+        notes = notes.concat(lastDeleted.data); 
+        saveLocal(); 
+        showNotification({title:'Restored', type:'success', duration:2000});
+        lastDeleted=null; 
+        toast.classList.add('hidden'); 
+      }
+      else if(lastDeleted.mode==='cloud_bulk'){ 
+        for(const d of lastDeleted.data){ 
+          const to = {...d}; 
+          delete to.id; 
+          await addCloud(to); 
+        } 
+        showNotification({title:'Restored', type:'success', duration:2000});
+        lastDeleted=null; 
+        toast.classList.add('hidden'); 
+      }
+    });
+
+
+    // Delete selected / bulk actions
+    deleteSelectedBtn.addEventListener('click', async ()=>{
+      if(selectedSet.size===0){ 
+        showNotification({title:'No Selection', message:'Please select notes to delete', type:'warning', duration:3000});
+        return; 
+      }
+      
+      const result = await showModal({
+        title: 'Delete Selected Notes?',
+        message: `Are you sure you want to delete ${selectedSet.size} selected note${selectedSet.size > 1 ? 's' : ''}?\nThis action cannot be undone.`,
+        icon: 'warning',
+        buttons: [
+          {text: 'Cancel', type: 'secondary', value: false},
+          {text: 'Delete All', type: 'danger', value: true}
+        ]
+      });
+      
+      if(!result) return;
+      
+      if(mode==='local'){
+        const deleted = notes.filter(n=> selectedSet.has(n.id)); 
+        lastDeleted = { mode:'local_bulk', data:deleted.map(d=>({...d})) };
+        notes = notes.filter(n=> !selectedSet.has(n.id)); 
+        saveLocal(); 
+        selectedSet.clear(); 
+        showToast('Deleted selected', true);
+      } else {
+        const toDelete = notes.filter(n=> selectedSet.has(n.id)); 
+        lastDeleted = { mode:'cloud_bulk', data:toDelete.map(d=>({...d})) };
+        for(const n of toDelete) await deleteCloud(n.id);
+        selectedSet.clear(); 
+        showToast('Deleted selected', true);
+      }
+    });
+
+    selectAllBtn.addEventListener('click', ()=>{ 
+      notes.forEach(n=> selectedSet.add(n.id)); 
+      render(); 
+    });
+    
+    deselectAllBtn.addEventListener('click', ()=>{ 
+      selectedSet.clear(); 
+      render(); 
+    });
+    
+    selectModeBtn.addEventListener('click', ()=>{ 
+      selectModeOn = !selectModeOn; 
+      if(!selectModeOn) selectedSet.clear(); 
+      render(); 
+    });
+
+    // Export / Import / Clear
+    exportBtn.addEventListener('click', ()=>{
+      const data = JSON.stringify(notes, null, 2);
+      const blob = new Blob([data], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); 
+      a.href = url; 
+      a.download = `tahleel_notes_export_${mode}_${Date.now()}.json`; 
+      document.body.appendChild(a); 
+      a.click(); 
+      a.remove(); 
+      URL.revokeObjectURL(url); 
+      showNotification({title:'Exported', message:'Notes exported successfully', type:'success', duration:3000});
+    });
+
+    importBtn.addEventListener('click', ()=> fileInput.click());
+    
+    fileInput.addEventListener('change', (e)=>{
+      const f = e.target.files[0]; 
+      if(!f) return; 
+      const r = new FileReader(); 
+      r.onload = async ()=>{
+        try{ 
+          const data = JSON.parse(r.result); 
+          if(!Array.isArray(data)){ 
+            showNotification({title:'Invalid File', message:'File format is not valid', type:'error', duration:4000});
+            return; 
+          }
+          if(mode==='local'){ 
+            data.forEach(d=>{ 
+              d.id = d.id || (Date.now().toString(36)+Math.random().toString(36).slice(2,8)); 
+              d.createdAt = d.createdAt || Date.now(); 
+              d.updatedAt = Date.now(); 
+              d.color = d.color || noteColors[Math.floor(Math.random() * noteColors.length)];
+              notes.push(d); 
+            }); 
+            saveLocal(); 
+            showNotification({title:'Imported', message:`${data.length} notes imported successfully`, type:'success', duration:3000});
+          }
+          else { 
+            for(const d of data){ 
+              const note = {...d}; 
+              delete note.id; 
+              note.createdAt = note.createdAt || Date.now(); 
+              note.updatedAt = Date.now(); 
+              await addCloud(note); 
+            } 
+            showNotification({title:'Imported', message:`${data.length} notes imported to cloud`, type:'success', duration:3000});
+          }
+        }catch(err){ 
+          showNotification({title:'Import Failed', message:'Invalid JSON file', type:'error', duration:4000});
+        }
+      }; 
+      r.readAsText(f);
+    });
+
+    clearAllBtn.addEventListener('click', async ()=>{
+      const result = await showModal({
+        title: 'Clear All Notes?',
+        message: `This will permanently delete ALL ${notes.length} notes.\nThis action cannot be undone.\n\nConsider exporting your notes first.`,
+        icon: 'error',
+        buttons: [
+          {text: 'Cancel', type: 'secondary', value: false},
+          {text: 'Clear All', type: 'danger', value: true}
+        ]
+      });
+      
+      if(!result) return;
+      
+      if(mode==='local'){ 
+        notes=[]; 
+        saveLocal(); 
+        showNotification({title:'Cleared', message:'All notes deleted', type:'info', duration:3000});
+      }
+      else { 
+        const snap = await getDocs(query(notesColRef, orderBy('updatedAt','desc'))); 
+        for(const d of snap.docs){ 
+          await deleteCloud(d.id); 
+        } 
+        showNotification({title:'Cleared', message:'All cloud notes deleted', type:'info', duration:3000});
+      }
+    });
+
+
+    // Mode toggle
+    modeToggle.addEventListener('click', async ()=>{
+      const target = mode === 'local' ? 'cloud' : 'local';
+      const msg = target === 'cloud' ? CLOUD_NOTICE : LOCAL_NOTICE;
+      
+      const result = await showModal({
+        title: `Switch to ${target.toUpperCase()} Mode?`,
+        message: msg,
+        icon: 'info',
+        buttons: [
+          {text: 'Cancel', type: 'secondary', value: false},
+          {text: 'Switch Mode', type: 'primary', value: true}
+        ]
+      });
+      
+      if(result) switchMode(target);
+    });
+
+    async function switchMode(target){
+      if(target === mode) return;
+      if(mode === 'cloud') stopCloudListener();
+      mode = target; 
+      localStorage.setItem(MODE_KEY, mode);
+      if(mode === 'local'){ 
+        loadLocal(); 
+      }
+      else { 
+        initFirebase(); 
+        startCloudListener(); 
+      }
+      render(); 
+      showNotification({
+        title:'Mode Switched', 
+        message:`Now using ${mode === 'local' ? 'Local' : 'Cloud'} mode`, 
+        type:'success', 
+        duration:3000
+      });
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown',(e)=>{
+      const mod = e.ctrlKey || e.metaKey;
+      if(mod && e.key.toLowerCase()==='n'){ 
+        e.preventDefault(); 
+        titleInput.focus(); 
+      }
+      if(mod && e.key.toLowerCase()==='k'){ 
+        e.preventDefault(); 
+        searchInput.focus(); 
+      }
+      if(mod && e.key.toLowerCase()==='s'){ 
+        e.preventDefault(); 
+        exportBtn.click(); 
+      }
+    });
+
+    // Theme toggle
+    const THEME_KEY = 'tahleel_notes_theme_v1';
+    
+    function applyTheme(isDark){
+      if(isDark){
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '🌤 Light';
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0a0a0f');
+      } else {
+        document.body.classList.remove('dark-mode');
+        themeToggle.textContent = '🌙 Dark';
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#667eea');
+      }
+      localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+    }
+    
+    themeToggle.addEventListener('click', ()=>{ 
+      const isDark = !document.body.classList.contains('dark-mode');
+      applyTheme(isDark);
+      showNotification({
+        title: isDark ? 'Dark Mode' : 'Light Mode',
+        message: isDark ? 'Yes i like Dark Mode' : 'Bright and vibrant Just like You',
+        type: 'info',
+        duration: 2000
+      });
+    });
+
+    // Fallback copy
+    function fallbackCopy(text){ 
+      const ta = document.createElement('textarea'); 
+      ta.value = text; 
+      document.body.appendChild(ta); 
+      ta.select(); 
+      try{ 
+        document.execCommand('copy'); 
+        showNotification({title:'Copied', type:'success', duration:2000});
+      }catch(e){ 
+        prompt('Copy this text:', text); 
+      } 
+      ta.remove(); 
+    }
+
+    // Mobile FAB behavior
+    fab.addEventListener('click', ()=>{
+      titleInput.focus();
+      window.scrollTo({top:0,behavior:'smooth'});
+      if(window.innerWidth <= 800){
+        textInput.style.minHeight = '220px';
+      }
+    });
+    
+    window.addEventListener('scroll', ()=>{
+      if(window.scrollY > 120) fab.style.display='flex'; 
+      else fab.style.display='none';
+    });
+
+    // Search functionality
+    searchInput.addEventListener('input', ()=> render());
+
+    // Init app
+    (function init(){
+      // Load saved theme
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+        applyTheme(true);
+      }
+      
+      // Load notes
+      if(mode === 'cloud'){ 
+        try{ 
+          initFirebase(); 
+          startCloudListener(); 
+        }catch(e){ 
+          console.warn('Cloud init failed:', e); 
+          mode='local'; 
+          localStorage.setItem(MODE_KEY, mode); 
+          loadLocal(); 
+        } 
+      }
+      else loadLocal();
+      render();
+      
+      // Welcome notification
+      setTimeout(()=>{
+        showNotification({
+          title:'Welcome to Tahleel Notes',
+          message:'A side project made in boredom hehe',
+          type:'info',
+          duration:4000
+        });
+      }, 500);
+    })();
+
+    // Expose for debugging
+    window.TahleelNotes = { switchMode, showModal, showNotification };
   </script>
 </body>
 </html>
